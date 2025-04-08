@@ -137,7 +137,7 @@ partial class Program
         Accessibility property,
     bool pub)
     {
-        if (solution is null)
+        if (solution is null || solution.Length == 0)
         {
             if (!DiscoverProject(out solution))
             {
@@ -196,7 +196,8 @@ partial class Program
         
         foreach (var cls in FixGenericNames(classes))
         {
-            var symbol = comps.Select(c => c.GetTypeByMetadataName(cls))
+            var symbol = comps.Where(c => c is not null)
+                .Select(c => c!.GetTypeByMetadataName(cls))
                 .FirstOrDefault(t => t is not null);
             exporter.Write(cls, symbol);
         }
