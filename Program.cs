@@ -3,6 +3,7 @@ using System.CommandLine;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
+using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis.MSBuild;
 
 namespace Syntex;
@@ -11,7 +12,7 @@ partial class Program
 {
     static async Task<int> Main(string[] args)
     {
-        var rc = new RootCommand("C# CLI Application to generate mermaid class diagrams from C# source files.");
+        var rc = new RootCommand("C# CLI Application to generate exports from C# source files.");
         var classes = new Option<string[]>(
             name: "--classes",
             description: "The fully qualified names of the classes to generate diagrams for.")
@@ -48,7 +49,7 @@ partial class Program
 
         var outputOption = new Option<FileInfo?>(
             name: "--output",
-            description: "The file to save the mermaid class diagram to.");
+            description: "The file to save the output to.");
 
         rc.AddOption(solution);
         rc.AddOption(outputOption);
@@ -103,6 +104,7 @@ partial class Program
             throw new ArgumentException("The project or solution does not exist.", nameof(solution));
         }
 
+        MSBuildLocator.RegisterDefaults();
         using var workspace = MSBuildWorkspace.Create();
         var comps = new ConcurrentBag<Compilation?>();
         if (solution.Extension.Equals(".sln", StringComparison.InvariantCultureIgnoreCase))

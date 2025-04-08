@@ -1,12 +1,57 @@
-#+title: Readme
+#+title: Syntex
 
-* Syntex
 CLI utility to export C# syntax trees to other formats (currently only [[https://mermaid.js.org/syntax/classDiagram.html][mermaid class diagrams]]).
 
-** Install
+* Install
 #+begin_src shell
 git clone https://github.com/Lillenne/Syntex
 cd Syntex
 dotnet pack
 dotnet tool install --global --add-source ./nupkg Lillenne.Syntex
+#+end_src
+
+* Usage
+#+begin_src shell
+syntex --help
+
+Description:
+  C# CLI Application to generate exports from C# source files.
+
+Usage:
+  Syntex [options]
+
+Options:
+  --sln <sln>                     The project or solution containing the files to parse.
+  --output <output>               The file to save the output to.
+  --classes <classes> (REQUIRED)  The fully qualified names of the classes to generate diagrams for.
+  --version                       Show version information
+  -?, -h, --help                  Show help and usage information
+#+end_src
+  
+#+begin_src shell
+syntex --classes Syntex.Test "Syntex.Test<T>" Syntex.ITest "Syntex.Test\`2"
+#+end_src
+
+#+begin_src mermaid :background-color transparent
+classDiagram
+    class Test
+    Test : +Method() Int32
+    Test : +Int32 Property
+    Test ..|> ITest
+
+    class Test1~T~
+    Test1~T~ : +Method() Int32
+    Test1~T~ : +Int32 Property
+    Test1~T~ : +String SomeProp
+    Test <|.. Test1~T~
+
+    class ITest
+    ITest : +Method() Int32
+    ITest : +Int32 Property
+
+    class Test2~T, U~
+    Test2~T, U~ : +Method() Int32
+    Test2~T, U~ : +Int32 Property
+    Test2~T, U~ : +String SomeProp
+    Test1~T~ <|.. Test2~T, U~
 #+end_src
