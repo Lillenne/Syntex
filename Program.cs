@@ -12,7 +12,6 @@ partial class Program
 {
     static async Task<int> Main(string[] args)
     {
-        var rc = new RootCommand("C# CLI Application to generate exports from C# source files.");
         var classes = new Option<string[]>(
             name: "--classes",
             description: "The fully qualified names of the classes to generate diagrams for.")
@@ -51,14 +50,14 @@ partial class Program
             Arity = ArgumentArity.ZeroOrMore
         };
 
-        var outputOption = new Option<FileInfo?>(
-            name: "--output",
-            description: "The file to save the output to.");
-
-        rc.AddOption(solution);
-        rc.AddOption(outputOption);
-        rc.AddOption(classes);
-        rc.SetHandler(Handler, solution, outputOption, classes);
+        var rc = new RootCommand("C# CLI Application to generate exports from C# source files.");
+        rc.AddGlobalOption(solution);
+        var mmd = new Command("mmd", "Export to mermaid");
+        rc.AddCommand(mmd);
+        var mmcd = new Command("cd", "Export to mermaid class diagram");
+        mmd.AddCommand(mmcd);
+        mmcd.AddOption(classes);
+        mmcd.SetHandler(Handler, solution, classes);
         return await rc.InvokeAsync(args);
     }
 
@@ -91,7 +90,7 @@ partial class Program
             || f.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase);;
     }
 
-    private static async Task<int> Handler(FileInfo[]? solution, FileInfo? output, string[] classes)
+    private static async Task<int> Handler(FileInfo[]? solution, string[] classes)
     {
         if (solution is null)
         {
@@ -133,7 +132,7 @@ partial class Program
             }
         });
 
-        var exporter = new MermaidClassDiagram(output?.FullName);
+        var exporter = new MermaidClassDiagram();
         foreach (var cls in FixGenericNames(classes))
         {
             var symbol = comps.Select(c => c.GetTypeByMetadataName(cls))

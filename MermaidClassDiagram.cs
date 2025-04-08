@@ -6,14 +6,12 @@ namespace Syntex;
 public class MermaidClassDiagram : IExporter
 {
     private readonly List<string> _notFound;
-    private readonly string? _path;
     private string? _className;
     private Dictionary<INamedTypeSymbol, List<INamedTypeSymbol?>> _classes = new(SymbolEqualityComparer.Default);
     private IndentedTextWriter _writer;
 
-    public MermaidClassDiagram(string? path = null)
+    public MermaidClassDiagram()
     {
-        _path = path;
         _notFound = [];
         _writer = new IndentedTextWriter(new StringWriter());
         Append("classDiagram");
@@ -63,10 +61,7 @@ public class MermaidClassDiagram : IExporter
         }
 
         var s = _writer.InnerWriter.ToString();
-        if (_path is not null)
-            File.WriteAllText(_path, s);
-        else
-            Console.WriteLine(s);
+        Console.WriteLine(s);
     }
 
     private void WriteName()
