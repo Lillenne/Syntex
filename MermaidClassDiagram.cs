@@ -19,6 +19,10 @@ public class MermaidClassDiagram : IExporter
         _writer.Indent++;
     }
 
+    public Accessibility MinimumMethodAccessibility { get; init; } = Accessibility.Protected;
+    public Accessibility MinimumFieldAccessibility { get; init; } = Accessibility.Protected;
+    public Accessibility MinimumPropertyAccessibility { get; init; } = Accessibility.Protected;
+
     public void Write(string clazz, INamedTypeSymbol? symbol)
     {
         if (symbol is null)
@@ -130,20 +134,20 @@ public class MermaidClassDiagram : IExporter
         _className = FormatTypeText(symbol);
         WriteName();
         var methods = symbol.GetMembers()
-            .Where(s => s is { Kind: SymbolKind.Method, DeclaredAccessibility: Accessibility.Public })
+            .Where(s => s.Kind == SymbolKind.Method && s.DeclaredAccessibility > MinimumMethodAccessibility)
             .Cast<IMethodSymbol>()
             .Where(s => s.MethodKind == MethodKind.Ordinary);
         foreach (var method in methods)
             Write(method);
 
         var fields = symbol.GetMembers()
-            .Where(s => s is { Kind: SymbolKind.Field, DeclaredAccessibility: Accessibility.Public })
+            .Where(s => s.Kind == SymbolKind.Field && s.DeclaredAccessibility > MinimumFieldAccessibility)
             .Cast<IFieldSymbol>();
         foreach (var field in fields)
             Write(field);
 
         var properties = symbol.GetMembers()
-            .Where(s => s is { Kind: SymbolKind.Property, DeclaredAccessibility: Accessibility.Public })
+            .Where(s => s.Kind == SymbolKind.Property && s.DeclaredAccessibility > MinimumPropertyAccessibility)
             .Cast<IPropertySymbol>();
         foreach (var prop in properties)
             Write(prop);

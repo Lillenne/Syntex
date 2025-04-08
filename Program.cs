@@ -50,6 +50,32 @@ partial class Program
             Arity = ArgumentArity.ZeroOrMore
         };
 
+        var allAccessibility = new Option<bool>(
+            "--all",
+            """
+            Include all methods, properties, and fields regardless of accessibility.
+            Overrides individual accessibility settings.
+            """);
+
+        var pub = new Option<bool>(
+            "--public",
+            """
+            Include only public methods, properties, and fields regardless of accessibility.
+            Overrides individual accessibility settings and the 'all' setting. 
+            """);
+        var methodAccessibility = new Option<Accessibility>(
+            name: "--method",
+            description: "Minimum accessibility level for methods",
+            getDefaultValue: () => Accessibility.Protected);
+        var fieldAccessibility = new Option<Accessibility>(
+            name: "--field",
+            description: "Minimum accessibility level for fields",
+            getDefaultValue: () => Accessibility.Protected);
+        var propertyAccessibility = new Option<Accessibility>(
+            name: "--props",
+            description: "Minimum accessibility level for properties",
+            getDefaultValue: () => Accessibility.Protected);
+
         var rc = new RootCommand("C# CLI Application to generate exports from C# source files.");
         rc.AddGlobalOption(solution);
         var mmd = new Command("mmd", "Export to mermaid");
@@ -57,7 +83,19 @@ partial class Program
         var mmcd = new Command("cd", "Export to mermaid class diagram");
         mmd.AddCommand(mmcd);
         mmcd.AddOption(classes);
-        mmcd.SetHandler(Handler, solution, classes);
+        mmcd.AddOption(allAccessibility);
+        mmcd.AddOption(pub);
+        mmcd.AddOption(methodAccessibility);
+        mmcd.AddOption(fieldAccessibility);
+        mmcd.AddOption(propertyAccessibility);
+        mmcd.SetHandler(MermaidClassDiagram,
+                        solution,
+                        classes,
+                        allAccessibility,
+                        methodAccessibility,
+                        fieldAccessibility,
+                        propertyAccessibility,
+        pub);
         return await rc.InvokeAsync(args);
     }
 
@@ -90,7 +128,14 @@ partial class Program
             || f.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase);;
     }
 
-    private static async Task<int> Handler(FileInfo[]? solution, string[] classes)
+    private static async Task<int> MermaidClassDiagram(
+        FileInfo[]? solution,
+        string[] classes,
+        bool all,
+        Accessibility method,
+        Accessibility field,
+        Accessibility property,
+    bool pub)
     {
         if (solution is null)
         {
@@ -132,7 +177,23 @@ partial class Program
             }
         });
 
-        var exporter = new MermaidClassDiagram();
+        if (all)
+        {
+            method = field = property = Accessibility.NotApplicable;
+        }
+
+        if (pub)
+        {
+            method = field = property = Accessibility.Public;
+        }
+
+        var exporter = new MermaidClassDiagram()
+        {
+            MinimumMethodAccessibility = method,
+            MinimumFieldAccessibility = field,
+            MinimumPropertyAccessibility = property
+        };
+        
         foreach (var cls in FixGenericNames(classes))
         {
             var symbol = comps.Select(c => c.GetTypeByMetadataName(cls))

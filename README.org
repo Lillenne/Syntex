@@ -15,17 +15,22 @@ dotnet tool install --global --add-source ./nupkg Lillenne.Syntex
 syntex --help
 
 Description:
-  C# CLI Application to generate exports from C# source files.
+  Export to mermaid class diagram
 
 Usage:
-  Syntex [options]
+  Syntex mmd cd [options]
 
 Options:
-  --proj <proj>                   The project(s) or solution(s) containing the files to parse.
-  --output <output>               The file to save the output to.
-  --classes <classes> (REQUIRED)  The fully qualified names of the classes to generate diagrams for.
-  --version                       Show version information
-  -?, -h, --help                  Show help and usage information
+  --classes <classes> (REQUIRED)                                                                                                                   The fully qualified names of the classes to generate diagrams for.
+  --all                                                                                                                                            Include all methods, properties, and fields regardless of accessibility.
+                                                                                                                                                   Overrides individual accessibility settings.
+  --public                                                                                                                                         Include only public methods, properties, and fields regardless of accessibility.
+                                                                                                                                                   Overrides individual accessibility settings and the 'all' setting.
+  --method <Friend|Internal|NotApplicable|Private|Protected|ProtectedAndFriend|ProtectedAndInternal|ProtectedOrFriend|ProtectedOrInternal|Public>  Minimum accessibility level for methods [default: Protected]
+  --field <Friend|Internal|NotApplicable|Private|Protected|ProtectedAndFriend|ProtectedAndInternal|ProtectedOrFriend|ProtectedOrInternal|Public>   Minimum accessibility level for fields [default: Protected]
+  --props <Friend|Internal|NotApplicable|Private|Protected|ProtectedAndFriend|ProtectedAndInternal|ProtectedOrFriend|ProtectedOrInternal|Public>   Minimum accessibility level for properties [default: Protected]
+  --proj <proj>                                                                                                                                    The project(s) or solution(s) containing the files to parse.
+  -?, -h, --help                                                                                                                                   Show help and usage information
 #+end_src
   
 #+begin_src shell
