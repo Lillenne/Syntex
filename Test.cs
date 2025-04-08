@@ -8,8 +8,8 @@ public interface ITest
 
 public class Test : ITest
 {
-    public int Property { get; set; }
-    public int Method()
+    public virtual int Property { get; set; }
+    public virtual int Method()
     {
         throw new NotImplementedException();
     }
@@ -17,19 +17,14 @@ public class Test : ITest
 
 public class Test<T> : Test
 {
-    public int Property { get; set; }
-    public string SomeProp { get; set; }
-    public int Method()
+    public string? SomeProp { get; set; }
+    public override int Property { get; set; }
+    public override int Method()
     {
         throw new NotImplementedException();
     }
 }
 public class Test<T,U> : Test<T>
 {
-    public int Property { get; set; }
-    public string SomeProp { get; set; }
-    public int Method()
-    {
-        throw new NotImplementedException();
-    }
+    public string? SomeProp2 { get; set; }
 }

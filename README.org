@@ -34,11 +34,15 @@ Options:
 #+end_src
   
 #+begin_src shell
-syntex --classes Syntex.Test "Syntex.Test<T>" Syntex.ITest "Syntex.Test\`2"
+syntex mmd cd --classes Syntex.ITest Syntex.Test "Syntex.Test<T>" "Syntex.Test\`2"
 #+end_src
 
 #+begin_src mermaid :background-color transparent
 classDiagram
+    class ITest
+    ITest : +Method() Int32
+    ITest : +Int32 Property
+
     class Test
     Test : +Method() Int32
     Test : +Int32 Property
@@ -46,17 +50,11 @@ classDiagram
 
     class Test1~T~
     Test1~T~ : +Method() Int32
-    Test1~T~ : +Int32 Property
     Test1~T~ : +String SomeProp
+    Test1~T~ : +Int32 Property
     Test <|.. Test1~T~
 
-    class ITest
-    ITest : +Method() Int32
-    ITest : +Int32 Property
-
     class Test2~T, U~
-    Test2~T, U~ : +Method() Int32
-    Test2~T, U~ : +Int32 Property
-    Test2~T, U~ : +String SomeProp
+    Test2~T, U~ : +String SomeProp2
     Test1~T~ <|.. Test2~T, U~
 #+end_src
