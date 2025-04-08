@@ -21,7 +21,7 @@ Usage:
   Syntex [options]
 
 Options:
-  --sln <sln>                     The project or solution containing the files to parse.
+  --proj <proj>                   The project(s) or solution(s) containing the files to parse.
   --output <output>               The file to save the output to.
   --classes <classes> (REQUIRED)  The fully qualified names of the classes to generate diagrams for.
   --version                       Show version information

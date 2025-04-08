@@ -22,9 +22,9 @@ partial class Program
             AllowMultipleArgumentsPerToken = true,
         };
 
-        var solution = new Option<FileInfo?>(
-            name: "--sln",
-        description: "The project or solution containing the files to parse.",
+        var solution = new Option<FileInfo[]?>(
+            name: "--proj",
+        description: "The project(s) or solution(s) containing the files to parse.",
         parseArgument: result =>
         {
             Console.WriteLine($"Tokens {result.Tokens.Count}, {result.Tokens}");
@@ -38,14 +38,18 @@ partial class Program
                 case 1:
                     var value = Path.GetFullPath(result.Tokens.Single().Value);
                     if (File.Exists(value) && IsProjOrSln(value))
-                        return new FileInfo(value);
+                        return [new FileInfo(value)];
                     result.ErrorMessage = $"Invalid solution file: {value}";
                     return null!;
                 default:
                     result.ErrorMessage = "Too many files specified";
                     return null!;
             }
-        });
+        })
+        {
+            AllowMultipleArgumentsPerToken = true,
+            Arity = ArgumentArity.ZeroOrMore
+        };
 
         var outputOption = new Option<FileInfo?>(
             name: "--output",
@@ -58,21 +62,23 @@ partial class Program
         return await rc.InvokeAsync(args);
     }
 
-    private static bool DiscoverProject([NotNullWhen(true)] out FileInfo? project)
+    private static bool DiscoverProject([NotNullWhen(true)] out FileInfo[]? project)
     {
         var sln = Directory.EnumerateFiles(Directory.GetCurrentDirectory())
-            .FirstOrDefault(static f => f.EndsWith(".sln", StringComparison.InvariantCultureIgnoreCase));
-        if (sln is not null)
+            .Where(static f => f.EndsWith(".sln", StringComparison.InvariantCultureIgnoreCase))
+            .ToList();
+        if (sln.Count > 0)
         {
-            project = new FileInfo(sln);
+            project = sln.Select(s => new FileInfo(s)).ToArray();
             return true;
         }
         var proj = Directory.EnumerateFiles(Directory.GetCurrentDirectory())
-            .FirstOrDefault(static f => IsProjOrSln(f));
-        if (File.Exists(proj))
+            .Where(static f => IsProjOrSln(f))
+            .ToList();
+        if (proj.Count > 0)
         {
-            project = new FileInfo(proj);
-            return true;
+            project = proj.Select(s => new FileInfo(s)).ToArray();
+  return true;
         }
 
         project = null;
@@ -85,7 +91,7 @@ partial class Program
             || f.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase);;
     }
 
-    private static async Task<int> Handler(FileInfo? solution, FileInfo? output, string[] classes)
+    private static async Task<int> Handler(FileInfo[]? solution, FileInfo? output, string[] classes)
     {
         if (solution is null)
         {
@@ -99,25 +105,33 @@ partial class Program
             }
         }
 
-        if (!solution.Exists)
+        if (solution.Any(s => !s.Exists))
         {
-            throw new ArgumentException("The project or solution does not exist.", nameof(solution));
+            var missing = string.Join(Environment.NewLine, solution.Where(s => !s.Exists).Select(s => s.FullName));
+            var errMsg = $"""
+                The following project(s) or solution(s) do not exist:
+                {missing}
+                """;
+            throw new ArgumentException(errMsg, nameof(solution));
         }
 
         MSBuildLocator.RegisterDefaults();
         using var workspace = MSBuildWorkspace.Create();
         var comps = new ConcurrentBag<Compilation?>();
-        if (solution.Extension.Equals(".sln", StringComparison.InvariantCultureIgnoreCase))
+        await Parallel.ForEachAsync(solution, async (s, ct) =>
         {
-            var sln = await workspace.OpenSolutionAsync(solution.FullName);
-            await Parallel.ForEachAsync(sln.Projects,
-                async (project, cancellationToken) => comps.Add(await project.GetCompilationAsync(cancellationToken)));
-        }
-        else
-        {
-            var proj = await workspace.OpenProjectAsync(solution.FullName);
-            comps.Add(await proj.GetCompilationAsync());
-        }
+            if (s.Extension.Equals(".sln", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var sln = await workspace.OpenSolutionAsync(s.FullName);
+                await Parallel.ForEachAsync(sln.Projects,
+                    async (project, cancellationToken) => comps.Add(await project.GetCompilationAsync(cancellationToken)));
+            }
+            else
+            {
+                var proj = await workspace.OpenProjectAsync(s.FullName);
+                comps.Add(await proj.GetCompilationAsync());
+            }
+        });
 
         var exporter = new MermaidClassDiagram(output?.FullName);
         foreach (var cls in FixGenericNames(classes))
