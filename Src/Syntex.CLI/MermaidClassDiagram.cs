@@ -1,7 +1,7 @@
 using System.CodeDom.Compiler;
 using Microsoft.CodeAnalysis;
 
-namespace Syntex;
+namespace Syntex.CLI;
 
 public class MermaidClassDiagram : IExporter
 {

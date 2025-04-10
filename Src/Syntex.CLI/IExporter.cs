@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace Syntex;
+namespace Syntex.CLI;
 
 // Should probably use the existing visitor structure...
 public interface IExporter

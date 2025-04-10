@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis.MSBuild;
 
-namespace Syntex;
+namespace Syntex.CLI;
 
 partial class Program
 {

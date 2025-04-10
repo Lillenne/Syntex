@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace Syntex;
+namespace Syntex.CLI;
 
 public class ConsoleExporter : IExporter
 {

@@ -1,4 +1,4 @@
-namespace Syntex;
+namespace Syntex.Test;
 
 public interface ITest
 {
@@ -24,6 +24,7 @@ public class Test<T> : Test
         throw new NotImplementedException();
     }
 }
+
 public class Test<T,U> : Test<T>
 {
     public string? SomeProp2 { get; set; }

@@ -58,3 +58,21 @@ classDiagram
     Test2~T, U~ : +String SomeProp2
     Test1~T~ <|.. Test2~T, U~
 #+end_src
+* TODO Architecture
+Visitor for mermaid
+Visit class token
+Export is outside of the interface
+
+Abstract factory pattern?
+
+Interface
+- Detect/Parse
+-
+#+begin_src mermaid :background-color transparent
+
+#+end_src
+[fn:1]
+
+* Footnotes
+
+[fn:1] Generated using ~syntex mmd cd~
