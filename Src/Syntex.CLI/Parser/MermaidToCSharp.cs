@@ -43,7 +43,7 @@ public class MermaidClassToCSharp
         ICharStream stream = CharStreams.fromString(text);
         ITokenSource lexer = new MermaidLexer(stream);
         ITokenStream tokens = new CommonTokenStream(lexer);
-        MermaidParser parser = new MermaidParser(tokens);
+        MermaidParser parser = new MermaidParser(tokens, TextWriter.Null, TextWriter.Null);
         IParseTree tree = parser.diagram();
         return tree;
     }

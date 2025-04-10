@@ -27,7 +27,6 @@ partial class Program
         description: "The project(s) or solution(s) containing the files to parse.",
         parseArgument: result =>
         {
-            Console.WriteLine($"Tokens {result.Tokens.Count}, {result.Tokens}");
             switch (result.Tokens.Count)
             {
                 case 0:
@@ -131,9 +130,9 @@ partial class Program
         return await rc.InvokeAsync(args);
     }
 
-    private static void Mm2Cs(FileInfo obj)
+    private static void Mm2Cs(FileInfo? obj)
     {
-        var text = File.ReadAllText(obj.FullName);
+        var text = File.ReadAllText(obj?.FullName ?? throw new InvalidOperationException());
         var exporter = new MermaidClassToCSharp();
         var cs = exporter.Export(text);
         Console.WriteLine(cs);

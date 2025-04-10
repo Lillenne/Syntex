@@ -1,6 +1,6 @@
 #+title: Syntex
 
-CLI utility to export C# syntax trees to other formats (currently only [[https://mermaid.js.org/syntax/classDiagram.html][mermaid class diagrams]]).
+CLI utility to export C# syntax trees to [[https://mermaid.js.org/syntax/classDiagram.html][mermaid class diagrams]] and vice versa.
 
 * Install
 #+begin_src shell
@@ -11,8 +11,9 @@ dotnet tool install --global --add-source ./nupkg Lillenne.Syntex
 #+end_src
 
 * Usage
+** C# to mermaid
 #+begin_src shell
-syntex --help
+syntex cs --help
 
 Description:
   Export to mermaid class diagram
@@ -57,4 +58,68 @@ classDiagram
     class Test2~T, U~
     Test2~T, U~ : +String SomeProp2
     Test1~T~ <|.. Test2~T, U~
+#+end_src
+** Mermaid to C#
+#+begin_src shell
+syntex mmd --help
+
+Description:
+  Export mermaid class diagram
+
+Usage:
+  Syntex.CLI mmd [command] [options]
+
+Options:
+  --input <input> (REQUIRED)  The input mermaid class diagram
+  -?, -h, --help              Show help and usage information
+
+Commands:
+  cs  Export mermaid class diagram to C# source files.
+#+end_src
+
+#+begin_src shell
+syntex mmd cs --input sample-diagram.cs
+#+end_src
+
+Contents of [[file:sample-diagram.mmd][the sample diagram]]:
+#+begin_src mermaid :theme dark :background-color transparent
+classDiagram
+    A <|-- B
+    B ..|> C
+
+    class A
+
+    class B {
+      -TestField
+      +int AnotherTestField
+      +TestMethod() int*
+      +VoidMethod()$
+    }
+#+end_src
+
+Output:
+#+begin_src csharp
+public class A
+{
+}
+
+public class B : A, C
+{
+    private TYPE TestField { get; set; }
+
+    public int AnotherTestField { get; set; }
+
+
+    public abstract int TestMethod()
+    {
+
+    }
+
+    public static void VoidMethod()
+    {
+
+    }
+}
+
+
 #+end_src
