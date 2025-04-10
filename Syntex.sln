@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{909C418E-00A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syntex.CLI", "Src\Syntex.CLI\Syntex.CLI.csproj", "{644AD8FA-049E-4A47-9967-830E719A495C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{2E3E1A07-B127-4CBB-8A37-C49EF303F403}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syntex.Test", "Test\Syntex.Test\Syntex.Test.csproj", "{93B7E6A7-8852-43E8-AFF7-2F49D961FC00}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +24,13 @@ Global
 		{644AD8FA-049E-4A47-9967-830E719A495C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{644AD8FA-049E-4A47-9967-830E719A495C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{644AD8FA-049E-4A47-9967-830E719A495C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93B7E6A7-8852-43E8-AFF7-2F49D961FC00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93B7E6A7-8852-43E8-AFF7-2F49D961FC00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93B7E6A7-8852-43E8-AFF7-2F49D961FC00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93B7E6A7-8852-43E8-AFF7-2F49D961FC00}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{644AD8FA-049E-4A47-9967-830E719A495C} = {909C418E-00AC-4259-962D-A8E09B537F85}
+		{93B7E6A7-8852-43E8-AFF7-2F49D961FC00} = {2E3E1A07-B127-4CBB-8A37-C49EF303F403}
 	EndGlobalSection
 EndGlobal
