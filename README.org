@@ -2,12 +2,14 @@
 
 CLI utility to export C# syntax trees to [[https://mermaid.js.org/syntax/classDiagram.html][mermaid class diagrams]] and vice versa.
 
+[[./readme-images/code-transpile.png]]
+
 * Install
 #+begin_src shell
 git clone https://github.com/Lillenne/Syntex
 cd Syntex
 dotnet pack
-dotnet tool install --global --add-source ./nupkg Lillenne.Syntex
+dotnet tool install --global --add-source ./Src/Syntex.CLI/nupkg Lillenne.Syntex
 #+end_src
 
 * Usage
